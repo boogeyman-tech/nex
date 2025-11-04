@@ -24,8 +24,13 @@ class AppCustomAuthenticator extends AbstractLoginFormAuthenticator
 
     public const LOGIN_ROUTE = 'app_login';
 
-    public function __construct(private UrlGeneratorInterface $urlGenerator, private EntityManagerInterface $em)
+    private $csrfTokenManager;
+    private $logger;
+
+    public function __construct(private UrlGeneratorInterface $urlGenerator, private EntityManagerInterface $em, \Symfony\Component\Security\Csrf\CsrfTokenManagerInterface $csrfTokenManager, \Psr\Log\LoggerInterface $logger)
     {
+        $this->csrfTokenManager = $csrfTokenManager;
+        $this->logger = $logger;
     }
 
     public function authenticate(Request $request): Passport
@@ -34,11 +39,17 @@ class AppCustomAuthenticator extends AbstractLoginFormAuthenticator
 
         $request->getSession()->set(Security::LAST_USERNAME, $email);
 
+        $csrfToken = $request->request->get('_csrf_token');
+        $sessionToken = $this->csrfTokenManager->getToken('authenticate')->getValue();
+
+        $this->logger->info('CSRF token from request: {request_token}', ['request_token' => $csrfToken]);
+        $this->logger->info('CSRF token from session: {session_token}', ['session_token' => $sessionToken]);
+
         return new Passport(
             new UserBadge($email),
             new PasswordCredentials($request->request->get('password', '')),
             [
-                new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token')),
+                new CsrfTokenBadge('authenticate', $csrfToken),
                 new RememberMeBadge(),
             ]
         );
