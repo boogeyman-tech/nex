@@ -1,0 +1,104 @@
+ $ curl -k -c cookies.txt 'https://humble-enigma-g4wr4w74rjrqfp7x4-8000.app.github.dev/login' -o login.html
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 60041    0 60041    0     0   377k      0 --:--:-- --:--:-- --:--:--  378k
+@donaljojoofficial ➜ /workspaces/IntruNex/intrunex (main) $ TOKEN=$(grep -oP '_csrf_token" value="\K[^"]+' login.html)
+echo "$TOKEN"
+e9809762bfe727c1119662aebd4904.XXVfQ8RI7_9QavDi5xnTty0R84YfM2OhHfDlJ7jV0ic.JzZyAvUOgbo8LZO4q0ub0UJ6xbJ8ViH2aZOnQMmPjW4EOQwb8S-MrQMsuQ
+@donaljojoofficial ➜ /workspaces/IntruNex/intrunex (main) $ TOKEN=$(grep -oP '_csrf_token" value="\K[^"]+' login.html)
+echo "$TOKEN"
+e9809762bfe727c1119662aebd4904.XXVfQ8RI7_9QavDi5xnTty0R84YfM2OhHfDlJ7jV0ic.JzZyAvUOgbo8LZO4q0ub0UJ6xbJ8ViH2aZOnQMmPjW4EOQwb8S-MrQMsuQ
+@donaljojoofficial ➜ /workspaces/IntruNex/intrunex (main) $ curl -k -v -b cookies.txt -c cookies.txt -X POST 'https://humble-enigma-g4wr4w74rjrqfp7x4-8000.app.github.dev/login' \
+  -d "email=your@example.com" -d "password=yourpassword" -d "_csrf_token=${TOKEN}"
+Note: Unnecessary use of -X or --request, POST is already inferred.
+* Host humble-enigma-g4wr4w74rjrqfp7x4-8000.app.github.dev:443 was resolved.
+* IPv6: (none)
+* IPv4: 20.207.70.99
+*   Trying 20.207.70.99:443...
+* Connected to humble-enigma-g4wr4w74rjrqfp7x4-8000.app.github.dev (20.207.70.99) port 443
+* ALPN: curl offers h2,http/1.1
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+* TLSv1.3 (IN), TLS handshake, Encrypted Extensions (8):
+* TLSv1.3 (IN), TLS handshake, Certificate (11):
+* TLSv1.3 (IN), TLS handshake, CERT verify (15):
+* TLSv1.3 (IN), TLS handshake, Finished (20):
+* TLSv1.3 (OUT), TLS change cipher, Change cipher spec (1):
+* TLSv1.3 (OUT), TLS handshake, Finished (20):
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384 / X25519 / RSASSA-PSS
+* ALPN: server accepted h2
+* Server certificate:
+*  subject: C=US; ST=Washington; L=Redmond; O=Microsoft Corporation; CN=app.github.dev
+*  start date: Oct 12 00:00:00 2025 GMT
+*  expire date: Apr 10 23:59:59 2026 GMT
+*  issuer: C=US; O=DigiCert Inc; CN=DigiCert SHA2 Secure Server CA
+*  SSL certificate verify result: self-signed certificate in certificate chain (19), continuing anyway.
+*   Certificate level 0: Public key type RSA (2048/112 Bits/secBits), signed using sha256WithRSAEncryption
+*   Certificate level 1: Public key type RSA (2048/112 Bits/secBits), signed using sha256WithRSAEncryption
+*   Certificate level 2: Public key type RSA (2048/112 Bits/secBits), signed using sha1WithRSAEncryption
+* using HTTP/2
+* [HTTP/2] [1] OPENED stream for https://humble-enigma-g4wr4w74rjrqfp7x4-8000.app.github.dev/login
+* [HTTP/2] [1] [:method: POST]
+* [HTTP/2] [1] [:scheme: https]
+* [HTTP/2] [1] [:authority: humble-enigma-g4wr4w74rjrqfp7x4-8000.app.github.dev]
+* [HTTP/2] [1] [:path: /login]
+* [HTTP/2] [1] [user-agent: curl/8.5.0]
+* [HTTP/2] [1] [accept: */*]
+* [HTTP/2] [1] [cookie: .Tunnels.Relay.WebForwarding.Cookies=CfDJ8Cs4yarcs6pKkdu0hlKHsZvtBwHTIHS_g2v59Upu3x01BAK0KlcKsg_KQdtlfsZfIUf3m7z2gmc1Me2RTrU2R_6xZDj0AU_hR5ekpv40r6jIOUDBWnOWYtH7c1LGxl96oigr7YodNAmtj7ZAvN4LJaDqXwDnCFtZvL5PLUFca_9w4_brNtxCTwNjgHwaGSsSu0STwE2q_-3t_072uI7Yrlv6IFqxCVlNkKKc4rrIdFjA3aOaoqAB7FbODvfQrt3nKSUwQqQit9ap73pYxFteCQwBPhnpBUf3FXJ1ZQv2T5yESaHO9TsPweBITDGN5eEn4_Oep0pR4hyQkhrZEb-5zjcnzG-6569tOwj_o3GQa_b_QQAiCL--kn2OiV1JFI09-HzQG0m0-6qYBohvRPE0dhX58cT_2cHNpvc69Flj2whZqfzliLV2fKIU_DuR4TjJKXaSyW-AUs0-69y7ki0TWqx2Q6NNmmR61povslfvtXeku6lAxmgEsHaFUSrpi2cH21r-HJBoOqmbnP8L8FvgYIBOozb1gGtW_UWJw79kupucUTeyn6klV2-pVJ9x8nbToPDHBFk-vrIBjOpMXHs4fdQXpN1SoiFXffs8bs916VoXDyH7vgOLdb15Ukpn3VJ9pW17FcYbifMH3uzoB5eM18m8b1MmlRNUatqRK22yqrmUgd1xQyl_bkHZRhBJl09QP7R5FZFuSgXiDtrZByYC6jAu8xsPfAQmL4uq8c7Je1mxWAQuRQgvqFTbip1MOnV4Lx3J9BEevA6K8Y3_mz4sQNkp1Y0Trr7rxxmoXWbpAaqquyuBXLErBsvZSdN45btpe5FQnXt0WKZ0fFrG1nIYxm7COrDsTOAgH7R_6H1qeb583OYoQlZmFCvxaEGuVPkQwGUy8AN8ipE0JkW77etgn-vIwuI4b2TX7On2DJI_4Ee7tbjS2LMou-Pp7YEVoA4FlMV9Far5g5U4oGk2gc-D6vAawvWN7M5i5AI8gaJnuJ-6; PHPSESSID=eudu0o53aifr9k1fb0g8mqq1fj]
+* [HTTP/2] [1] [content-length: 190]
+* [HTTP/2] [1] [content-type: application/x-www-form-urlencoded]
+> POST /login HTTP/2
+> Host: humble-enigma-g4wr4w74rjrqfp7x4-8000.app.github.dev
+> User-Agent: curl/8.5.0
+> Accept: */*
+> Cookie: .Tunnels.Relay.WebForwarding.Cookies=CfDJ8Cs4yarcs6pKkdu0hlKHsZvtBwHTIHS_g2v59Upu3x01BAK0KlcKsg_KQdtlfsZfIUf3m7z2gmc1Me2RTrU2R_6xZDj0AU_hR5ekpv40r6jIOUDBWnOWYtH7c1LGxl96oigr7YodNAmtj7ZAvN4LJaDqXwDnCFtZvL5PLUFca_9w4_brNtxCTwNjgHwaGSsSu0STwE2q_-3t_072uI7Yrlv6IFqxCVlNkKKc4rrIdFjA3aOaoqAB7FbODvfQrt3nKSUwQqQit9ap73pYxFteCQwBPhnpBUf3FXJ1ZQv2T5yESaHO9TsPweBITDGN5eEn4_Oep0pR4hyQkhrZEb-5zjcnzG-6569tOwj_o3GQa_b_QQAiCL--kn2OiV1JFI09-HzQG0m0-6qYBohvRPE0dhX58cT_2cHNpvc69Flj2whZqfzliLV2fKIU_DuR4TjJKXaSyW-AUs0-69y7ki0TWqx2Q6NNmmR61povslfvtXeku6lAxmgEsHaFUSrpi2cH21r-HJBoOqmbnP8L8FvgYIBOozb1gGtW_UWJw79kupucUTeyn6klV2-pVJ9x8nbToPDHBFk-vrIBjOpMXHs4fdQXpN1SoiFXffs8bs916VoXDyH7vgOLdb15Ukpn3VJ9pW17FcYbifMH3uzoB5eM18m8b1MmlRNUatqRK22yqrmUgd1xQyl_bkHZRhBJl09QP7R5FZFuSgXiDtrZByYC6jAu8xsPfAQmL4uq8c7Je1mxWAQuRQgvqFTbip1MOnV4Lx3J9BEevA6K8Y3_mz4sQNkp1Y0Trr7rxxmoXWbpAaqquyuBXLErBsvZSdN45btpe5FQnXt0WKZ0fFrG1nIYxm7COrDsTOAgH7R_6H1qeb583OYoQlZmFCvxaEGuVPkQwGUy8AN8ipE0JkW77etgn-vIwuI4b2TX7On2DJI_4Ee7tbjS2LMou-Pp7YEVoA4FlMV9Far5g5U4oGk2gc-D6vAawvWN7M5i5AI8gaJnuJ-6; PHPSESSID=eudu0o53aifr9k1fb0g8mqq1fj
+> Content-Length: 190
+> Content-Type: application/x-www-form-urlencoded
+> 
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+* old SSL session ID is stale, removing
+< HTTP/2 302 
+< date: Tue, 04 Nov 2025 17:51:47 GMT
+< content-type: text/html; charset=UTF-8
+< cache-control: no-cache,no-store
+< expires: Thu, 01 Jan 1970 00:00:00 GMT
+< location: /login
+< pragma: no-cache
+* Added cookie REMEMBERME="deleted" for domain humble-enigma-g4wr4w74rjrqfp7x4-8000.app.github.dev, path /, expire 1
+< set-cookie: REMEMBERME=deleted; expires=Mon, 04 Nov 2024 17:51:46 GMT; Max-Age=0; path=/; secure; httponly; samesite=none
+* Added cookie sf_redirect="%7B%22token%22%3A%224b79e1%22%2C%22route%22%3A%22app_login%22%2C%22method%22%3A%22POST%22%2C%22controller%22%3A%7B%22class%22%3A%22App%5C%5CModules%5C%5CLandingAndInfo%5C%5CController%5C%5CSecurityController%22%2C%22method%22%3A%22login%22%2C%22file%22%3A%22%5C%2Fworkspaces%5C%2FIntruNex%5C%2Fintrunex%5C%2Fsrc%5C%2FModules%5C%2FLandingAndInfo%5C%2FController%5C%2FSecurityController.php%22%2C%22line%22%3A19%7D%2C%22status_code%22%3A302%2C%22status_text%22%3A%22Found%22%7D" for domain humble-enigma-g4wr4w74rjrqfp7x4-8000.app.github.dev, path /, expire 0
+< set-cookie: sf_redirect=%7B%22token%22%3A%224b79e1%22%2C%22route%22%3A%22app_login%22%2C%22method%22%3A%22POST%22%2C%22controller%22%3A%7B%22class%22%3A%22App%5C%5CModules%5C%5CLandingAndInfo%5C%5CController%5C%5CSecurityController%22%2C%22method%22%3A%22login%22%2C%22file%22%3A%22%5C%2Fworkspaces%5C%2FIntruNex%5C%2Fintrunex%5C%2Fsrc%5C%2FModules%5C%2FLandingAndInfo%5C%2FController%5C%2FSecurityController.php%22%2C%22line%22%3A19%7D%2C%22status_code%22%3A302%2C%22status_text%22%3A%22Found%22%7D; path=/; secure; httponly; samesite=lax
+* Replaced cookie .Tunnels.Relay.WebForwarding.Cookies="CfDJ8Cs4yarcs6pKkdu0hlKHsZtINsNe1-rW--2L9PRcWEtQv3h7pPKiNQysOMFWuH3keG7nkRESnzGTY6i1JfI5ROkVBJBviTQgAyO1DTdqWC6Cwi7oDGbBD2OlyWiY5KRj8xgpmCzzbWPfkZjoUklml3v5uTjlJmpShtWQxJ3R5WJTkDgmdUTjLIOKT21NJpfEsro0pvfuiwcT2yKeQwMAFpNWbLyozRQwaLmdpUfwuzgAxthgys9QsKYUj2Rn9Njej24WHTmGR0PcYGDwqoY8tY3whoiuMz2MGXECZ_FGPKcHckV7eFJkShKZDzNzXxSv_JMt0EjheoTUSWZtMzJoR0iGxoSVZlCGJ_0doEdJjahbTPPkbxOa68goj2NvPZlH1Rxac-jp4-EkYGRaPoT9rSzumF-rUHh45H1Q_ctsJbtcqd7cC-9B67ZDxiwamGuPqSDxjFnYHFkXB-t_CeKBiiwvaXp3_lE_XQymqXlWxQGeGI8yjuqH8uGrAcpG4kzpi0gmFuGFNPnCBpdsA9MqGMDdPl-RwqgPm_fgHxT79SacCNlYctM9Bmh0dz_RwN1ApDdl_yx0xehKvU1yrPh6Jwc-lEuvt3qdfTExtdqk3vfrz8iP9H2NItqOiihe58O8yZecrvOBe2pl7VAo4SAPX_YjMNb9D8usxm87d5fpOwzKqJOOPiatg_h_4UotPfPDJ5AdxpOq5RIc5uLUXQamwdvqhich4kLdw_odkUkGaDYAmN59cYX8jUwCVLNZl6M1d8nl01wNWRT03ZA11LRlpNrAWtaTExG22dAAxDSMFpx_GY3DxI5f1khihegF_rz2V0eHggwwCuUzpVP6PtBtpnN8OtoWjZqm7tCl4raKLv457i97fWOPrP91zQfCbbCPTXMB-S3SKyg8_FMS7t42wBCDXfdI_Cd_PxNATRKlVixcJSFZfz3zFqTcbBWtA1sphgNVx3EJNouKQlpEUhcPTTYJvFN2WAyFgocGw5_gEaCY" for domain humble-enigma-g4wr4w74rjrqfp7x4-8000.app.github.dev, path /, expire 0
+< set-cookie: .Tunnels.Relay.WebForwarding.Cookies=CfDJ8Cs4yarcs6pKkdu0hlKHsZtINsNe1-rW--2L9PRcWEtQv3h7pPKiNQysOMFWuH3keG7nkRESnzGTY6i1JfI5ROkVBJBviTQgAyO1DTdqWC6Cwi7oDGbBD2OlyWiY5KRj8xgpmCzzbWPfkZjoUklml3v5uTjlJmpShtWQxJ3R5WJTkDgmdUTjLIOKT21NJpfEsro0pvfuiwcT2yKeQwMAFpNWbLyozRQwaLmdpUfwuzgAxthgys9QsKYUj2Rn9Njej24WHTmGR0PcYGDwqoY8tY3whoiuMz2MGXECZ_FGPKcHckV7eFJkShKZDzNzXxSv_JMt0EjheoTUSWZtMzJoR0iGxoSVZlCGJ_0doEdJjahbTPPkbxOa68goj2NvPZlH1Rxac-jp4-EkYGRaPoT9rSzumF-rUHh45H1Q_ctsJbtcqd7cC-9B67ZDxiwamGuPqSDxjFnYHFkXB-t_CeKBiiwvaXp3_lE_XQymqXlWxQGeGI8yjuqH8uGrAcpG4kzpi0gmFuGFNPnCBpdsA9MqGMDdPl-RwqgPm_fgHxT79SacCNlYctM9Bmh0dz_RwN1ApDdl_yx0xehKvU1yrPh6Jwc-lEuvt3qdfTExtdqk3vfrz8iP9H2NItqOiihe58O8yZecrvOBe2pl7VAo4SAPX_YjMNb9D8usxm87d5fpOwzKqJOOPiatg_h_4UotPfPDJ5AdxpOq5RIc5uLUXQamwdvqhich4kLdw_odkUkGaDYAmN59cYX8jUwCVLNZl6M1d8nl01wNWRT03ZA11LRlpNrAWtaTExG22dAAxDSMFpx_GY3DxI5f1khihegF_rz2V0eHggwwCuUzpVP6PtBtpnN8OtoWjZqm7tCl4raKLv457i97fWOPrP91zQfCbbCPTXMB-S3SKyg8_FMS7t42wBCDXfdI_Cd_PxNATRKlVixcJSFZfz3zFqTcbBWtA1sphgNVx3EJNouKQlpEUhcPTTYJvFN2WAyFgocGw5_gEaCY; path=/; secure; samesite=none; Partitioned
+< x-content-type-options: nosniff
+< ratelimit-limit: HttpRequestRatePerPort:1500/m
+< ratelimit-remaining: HttpRequestRatePerPort:1499
+< ratelimit-reset: HttpRequestRatePerPort:2s
+< x-report-abuse: https://msrc.microsoft.com/report/abuse
+< x-ms-ratelimit-limit: 1500
+< x-ms-ratelimit-remaining: 1496
+< x-ms-ratelimit-used: 4
+< x-ms-ratelimit-reset: 0
+< host: localhost:8000
+< x-debug-token: 4b79e1
+< x-debug-token-link: https://humble-enigma-g4wr4w74rjrqfp7x4-8000.app.github.dev/_profiler/4b79e1
+< x-powered-by: PHP/8.2.29
+< x-robots-tag: noindex, nofollow
+< referrer-policy: same-origin
+< vssaas-request-id: ce11850a-ad3d-4b6b-8380-72359a465d27
+< strict-transport-security: max-age=31536000; includeSubDomains
+< x-served-by: tunnels-prod-rel-inc1-v3-cluster
+< 
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="refresh" content="0;url='/login'" />
+
+        <title>Redirecting to /login</title>
+    </head>
+    <body>
+        Redirecting to <a href="/login">/login</a>.
+    </body>
+* Connection #0 to host humble-enigma-g4wr4w74rjrqfp7x4-8000.app.github.dev left intact

@@ -17,12 +17,8 @@ security:
         main:
             lazy: true
             provider: app_user_provider
-            custom_authenticator: App\Security\AppCustomAuthenticator
-            logout:
-                path: app_logout
-                target: landing_page
-                # where to redirect after logout
-                # target: app_any_route
+            custom_authenticators: [App\Security\AppCustomAuthenticator]
+            logout: ~
 
             remember_me:
                 secret: '%env(APP_SECRET)%'

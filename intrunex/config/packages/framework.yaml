@@ -8,11 +8,11 @@ framework:
     # Remove or comment this section to explicitly disable session support.
     session:
         handler_id: null
-        cookie_secure: 'auto'      # use Secure when on HTTPS
-        cookie_samesite: 'lax'     # use 'none' only if you must allow cross-site POSTs (requires Secure)
+        cookie_secure: auto        # require secure cookie (tunnel uses https)
+        cookie_samesite: lax    # allow cross-site forwarding via the relay
         cookie_httponly: true
         cookie_path: /
-        cookie_domain: '.app.github.dev'  # set if needed for cross-subdomain requests
+        # remove explicit cookie_domain so the runtime host is used
         storage_factory_id: session.storage.factory.native
 
     #esi: true
