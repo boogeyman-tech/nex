@@ -34,9 +34,9 @@ class SecurityController extends AbstractController
             $logger->info('CsrfTokenManager token for "authenticate" at render: '.$renderToken);
         }
 
-        if ($this->getUser()) {
-            return $this->redirectToRoute('dashboard');
-        }
+        // if ($this->getUser()) {
+        //     return $this->redirectToRoute('target_path');
+        // }
 
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
