@@ -18,6 +18,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordC
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Csrf\CsrfToken;
 class AppCustomAuthenticator extends AbstractLoginFormAuthenticator
@@ -26,28 +27,29 @@ class AppCustomAuthenticator extends AbstractLoginFormAuthenticator
 
     public const LOGIN_ROUTE = 'app_login';
 
-    private CsrfTokenManagerInterface $csrfTokenManager;
-    private LoggerInterface $logger;
-    private UrlGeneratorInterface $urlGenerator;
-    private EntityManagerInterface $em;
+    private $csrfTokenManager;
+    private $logger;
 
-    public function __construct(UrlGeneratorInterface $urlGenerator, EntityManagerInterface $em, CsrfTokenManagerInterface $csrfTokenManager, LoggerInterface $logger)
+    public function __construct(private UrlGeneratorInterface $urlGenerator, private EntityManagerInterface $em, CsrfTokenManagerInterface $csrfTokenManager, LoggerInterface $logger)
     {
-        $this->urlGenerator = $urlGenerator;
-        $this->em = $em;
         $this->csrfTokenManager = $csrfTokenManager;
         $this->logger = $logger;
     }
 
     public function authenticate(Request $request): Passport
     {
-        $email = (string) $request->request->get('email', '');
-        $password = (string) $request->request->get('password', '');
-        $csrfToken = (string) $request->request->get('_csrf_token', '');
+        $email = $request->request->get('email', '');
+        $password = $request->request->get('password', '');
+        $csrfToken = $request->request->get('_csrf_token');
+
+        if (false === $this->csrfTokenManager->isTokenValid(new CsrfToken('authenticate', $csrfToken))) {
+            $this->logger->error('Invalid CSRF token');
+            throw new InvalidCsrfTokenException();
+        }
 
         $request->getSession()->set(Security::LAST_USERNAME, $email);
 
-        // debug logs (safe)
+        // Debug logs
         $this->logger->info('Authenticator: CSRF token from request: {token}', ['token' => $csrfToken]);
         $this->logger->info('Authenticator: session id {id}', ['id' => $request->getSession()->getId()]);
 
@@ -55,7 +57,6 @@ class AppCustomAuthenticator extends AbstractLoginFormAuthenticator
             new UserBadge($email),
             new PasswordCredentials($password),
             [
-                new CsrfTokenBadge('authenticate', $csrfToken),
                 new RememberMeBadge(),
             ]
         );
@@ -63,6 +64,7 @@ class AppCustomAuthenticator extends AbstractLoginFormAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
+        // Log the login event
         $activityLog = new ActivityLog();
         $activityLog->setMessage('User logged in: ' . $token->getUser()->getUserIdentifier());
         $activityLog->setStatus('Success');
@@ -70,6 +72,7 @@ class AppCustomAuthenticator extends AbstractLoginFormAuthenticator
         $this->em->persist($activityLog);
         $this->em->flush();
 
+        // Redirect to previously requested URL if present, otherwise to landing page
         $targetPath = $this->getTargetPath($request->getSession(), $firewallName);
         if ($targetPath) {
             return new RedirectResponse($targetPath);
