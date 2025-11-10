@@ -1,0 +1,3 @@
+INTRUNEX
+
+IntruNex is an advanced web vulnerability scanning and management system developed using the Symfony Framework within GitHub Codespaces. It enables users to securely add and profile assets such as websites, web applications, and IP addresses, then perform automated vulnerability scans to detect potential security weaknesses. The platform generates detailed scan reports, highlights identified issues, and provides actionable insights to help users strengthen their asset security. By continuously monitoring and analyzing vulnerabilities, IntruNex empowers developers, security analysts, and organizations to proactively safeguard their digital infrastructure and maintain a robust security posture.
