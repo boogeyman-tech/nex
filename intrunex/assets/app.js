@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import DarkVeil from './components/DarkVeil';
 import './styles/dashboard.css';
-import './js/event-listener.js';
 
 const container = document.getElementById('react-dark-veil');
 
