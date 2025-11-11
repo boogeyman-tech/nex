@@ -1,0 +1,11 @@
+
+{% use "bootstrap_5_layout.html.twig" %}
+
+{%- block form_row -%}
+    <div class="form-floating mb-3">
+        {{- form_widget(form) -}}
+        {{- form_label(form) -}}
+        {{- form_help(form) -}}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock form_row -%}
