@@ -1,0 +1,55 @@
+.user-profile {
+    position: relative;
+}
+
+.user-info-card {
+    display: none;
+    position: absolute;
+    top: 50px;
+    right: 0;
+    width: 250px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    font-family: 'Poppins', sans-serif;
+}
+
+.user-info-card.show {
+    display: block;
+}
+
+.user-info-card .card-header {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.user-info-card .card-header i {
+    font-size: 24px;
+    margin-right: 10px;
+    color: #333;
+}
+
+.user-info-card .card-header span {
+    font-weight: 600;
+    font-size: 16px;
+    color: #333;
+}
+
+.user-info-card .card-body {
+    padding: 15px;
+}
+
+.user-info-card .card-body p {
+    margin: 0 0 15px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.user-info-card .card-body .btn {
+    width: 100%;
+    text-align: center;
+}

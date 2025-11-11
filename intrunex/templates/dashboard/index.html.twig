@@ -22,6 +22,20 @@
                     form.action = newAction;
                 });
             }
+
+            const userIcon = document.getElementById('user-icon');
+            const userInfoCard = document.getElementById('user-info-card');
+
+            userIcon.addEventListener('click', function(event) {
+                event.stopPropagation();
+                userInfoCard.classList.toggle('show');
+            });
+
+            document.addEventListener('click', function(event) {
+                if (!userInfoCard.contains(event.target) && !userIcon.contains(event.target)) {
+                    userInfoCard.classList.remove('show');
+                }
+            });
         });
     </script>
 {% endblock %}
@@ -41,7 +55,17 @@
             <a href="{{ path('app_logout') }}">Logout</a>
         </nav>
         <div class="user-profile">
-            <i class="fas fa-user-circle"></i>
+            <i class="fas fa-user-circle" id="user-icon"></i>
+            <div class="user-info-card" id="user-info-card">
+                <div class="card-header">
+                    <i class="fas fa-user-circle"></i>
+                    <span>{{ app.user.username|default('User') }}</span>
+                </div>
+                <div class="card-body">
+                    <p>{{ app.user.email|default('user@example.com') }}</p>
+                    <a href="#" class="btn btn-secondary">View Profile</a>
+                </div>
+            </div>
         </div>
     </header>
 
