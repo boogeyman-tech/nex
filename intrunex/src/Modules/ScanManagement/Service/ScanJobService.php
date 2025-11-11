@@ -20,16 +20,5 @@ class ScanJobService
         return $this->em->getRepository(Asset::class)->find($assetId);
     }
 
-    public function createScanJob(Asset $asset): ScanJob
-    {
-        $scanJob = new ScanJob();
-        $scanJob->setAsset($asset);
-        $scanJob->setStatus('running');
-        $scanJob->setStartedAt(new \DateTimeImmutable());
 
-        $this->em->persist($scanJob);
-        $this->em->flush();
-
-        return $scanJob;
-    }
 }

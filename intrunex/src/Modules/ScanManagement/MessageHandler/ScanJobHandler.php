@@ -24,24 +24,29 @@ class ScanJobHandler
 
     public function __invoke(ScanJobMessage $message)
     {
+        $scanJob = new ScanJob();
+        $scanJob->setStartedAt(new \DateTimeImmutable());
+
         $asset = $this->scanJobService->fetchAsset($message->getAssetId());
 
         if (!$asset) {
-            throw new \RuntimeException('Asset not found for id ' . $message->getAssetId());
-        }
-
-        $scanJob = $this->scanJobService->createScanJob($asset);
-
-        try {
-            $scanJob = $this->niktoScanService->scan($asset, $scanJob);
-            $scanJob->setStatus('completed');
-        } catch (\Exception $e) {
             $scanJob->setStatus('failed');
-            $scanJob->setErrorMessage($e->getMessage());
-        } finally {
-            $scanJob->setFinishedAt(new \DateTimeImmutable());
-            $this->em->persist($scanJob);
-            $this->em->flush();
+            $scanJob->setErrorMessage('Asset not found for id ' . $message->getAssetId());
+        } else {
+            $scanJob->setAsset($asset);
+            $scanJob->setStatus('running'); // Set to running before attempting scan
+
+            try {
+                $scanJob = $this->niktoScanService->scan($asset, $scanJob);
+                $scanJob->setStatus('completed');
+            } catch (\Exception $e) {
+                $scanJob->setStatus('failed');
+                $scanJob->setErrorMessage($e->getMessage());
+            }
         }
+
+        $scanJob->setFinishedAt(new \DateTimeImmutable());
+        $this->em->persist($scanJob);
+        $this->em->flush();
     }
 }
