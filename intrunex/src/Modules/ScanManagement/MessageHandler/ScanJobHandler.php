@@ -5,6 +5,7 @@ namespace App\Modules\ScanManagement\MessageHandler;
 use App\Modules\ScanManagement\Message\ScanJobMessage;
 use App\Modules\ScanManagement\Service\ScanJobService;
 use App\Modules\VulnerabilityDetection\Service\NiktoScanService;
+use App\Modules\AssetVulnerability\Service\VulnerabilityImportService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -13,12 +14,14 @@ class ScanJobHandler
 {
     private ScanJobService $scanJobService;
     private NiktoScanService $niktoScanService;
+    private VulnerabilityImportService $vulnerabilityImportService;
     private EntityManagerInterface $em;
 
-    public function __construct(ScanJobService $scanJobService, NiktoScanService $niktoScanService, EntityManagerInterface $em)
+    public function __construct(ScanJobService $scanJobService, NiktoScanService $niktoScanService, VulnerabilityImportService $vulnerabilityImportService, EntityManagerInterface $em)
     {
         $this->scanJobService = $scanJobService;
         $this->niktoScanService = $niktoScanService;
+        $this->vulnerabilityImportService = $vulnerabilityImportService;
         $this->em = $em;
     }
 
@@ -37,7 +40,8 @@ class ScanJobHandler
             $scanJob->setStatus('running'); // Set to running before attempting scan
 
             try {
-                $scanJob = $this->niktoScanService->scan($asset, $scanJob);
+                $jsonOutput = $this->niktoScanService->scan($asset, $scanJob);
+                $this->vulnerabilityImportService->importVulnerabilitiesFromJson($jsonOutput, $asset, $scanJob);
                 $scanJob->setStatus('completed');
             } catch (\Exception $e) {
                 $scanJob->setStatus('failed');
