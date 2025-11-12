@@ -65,9 +65,15 @@
 
     <form method="post" action="{{ path('asset_vuln_scan', {id: asset.id}) }}" style="display:inline-block;">
         <input type="hidden" name="_token" value="{{ csrf_token('vuln-scan-asset' ~ asset.id) }}">
-        <button type="submit" class="btn btn-warning">
-            <i class="bi bi-shield-exclamation"></i> Vulnerability Scan
-        </button>
+        <div class="input-group">
+            <select name="scanner" class="form-select">
+                <option value="nmap">Nmap</option>
+                <option value="nikto">Nikto</option>
+            </select>
+            <button type="submit" class="btn btn-warning">
+                <i class="bi bi-shield-exclamation"></i> Vulnerability Scan
+            </button>
+        </div>
     </form>
 </div>
 {% endblock %}

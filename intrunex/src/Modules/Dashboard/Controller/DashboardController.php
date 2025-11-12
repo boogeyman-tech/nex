@@ -97,7 +97,7 @@ class DashboardController extends AbstractController
         $em->persist($scanJob);
         $em->flush();
 
-        $bus->dispatch(new ScanJobMessage($scanJob->getId()));
+        $bus->dispatch(new ScanJobMessage($asset->getId()));
 
         $this->addFlash('success', 'Scan started for asset: ' . $asset->getName());
 
