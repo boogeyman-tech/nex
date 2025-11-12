@@ -8,6 +8,7 @@ use App\Modules\VulnerabilityDetection\Service\NiktoScanService;
 use App\Modules\AssetVulnerability\Service\VulnerabilityImportService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use App\Modules\ScanManagement\Entity\ScanJob;
 
 #[AsMessageHandler]
 class ScanJobHandler
