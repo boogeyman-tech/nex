@@ -1,5 +1,5 @@
 # This file is the entry point to configure your own services.
-# Files in the packages/ subdirectory configure your dependencies.
+# Files in the packages/subdirectory configure your dependencies.
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
@@ -31,8 +31,8 @@ services:
         arguments:
            $githubToken: '%env(GITHUB_API_TOKEN)%'
 
-    # VulnerabilityDetection NiktoScanService
-    App\Modules\VulnerabilityDetection\Service\NiktoScanService: ~
+    # VulnerabilityDetection NmapScanService
+    App\Modules\VulnerabilityDetection\Service\NmapScanService: ~
 
     # ScanManagement services
     App\Modules\ScanManagement\Service\ScanJobService: ~
@@ -41,7 +41,6 @@ services:
     App\Modules\ScanManagement\MessageHandler\ScanJobHandler:
         arguments:
             $scanJobService: '@App\Modules\ScanManagement\Service\ScanJobService'
-            $niktoScanService: '@App\Modules\VulnerabilityDetection\Service\NiktoScanService'
 
     # AssetDiscovery services
     App\Modules\AssetDiscovery\Service\AssetProfilingService: ~
