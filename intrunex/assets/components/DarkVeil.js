@@ -145,3 +145,21 @@ export default function DarkVeil({
   }, [hueShift, noiseIntensity, scanlineIntensity, speed, scanlineFrequency, warpAmount, resolutionScale]);
   return <canvas ref={ref} className="darkveil-canvas" />;
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const userIcon = document.getElementById('user-icon');
+    const userInfoCard = document.getElementById('user-info-card');
+
+    if (userIcon) {
+        userIcon.addEventListener('click', function(event) {
+            event.stopPropagation();
+            userInfoCard.classList.toggle('show');
+        });
+    }
+
+    document.addEventListener('click', function(event) {
+        if (userInfoCard && !userInfoCard.contains(event.target) && userIcon && !userIcon.contains(event.target)) {
+            userInfoCard.classList.remove('show');
+        }
+    });
+});

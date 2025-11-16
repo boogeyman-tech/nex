@@ -1,0 +1,26 @@
+<header class="dashboard-header">
+    <div class="logo">
+        <img src="{{ asset('images/logo.png') }}" alt="IntruNex Logo">
+        <span>IntruNex <strong>Dashboard</strong></span>
+    </div>
+    <nav class="dashboard-nav">
+        <a href="{{ path('dashboard') }}" class="{{ app.request.attributes.get('_route') == 'dashboard' ? 'active' : '' }}">Overview</a>
+        <a href="{{ path('scan_reports_index') }}" class="{{ app.request.attributes.get('_route') == 'scan_reports_index' ? 'active' : '' }}">Reports</a>
+        <a href="{{ path('app_analytics') }}" class="{{ app.request.attributes.get('_route') == 'app_analytics' ? 'active' : '' }}">Analytics</a>
+        <a href="#">Settings</a>
+        <a href="{{ path('app_logout') }}">Logout</a>
+    </nav>
+    <div class="user-profile">
+        <i class="fas fa-user-circle" id="user-icon"></i>
+        <div class="user-info-card" id="user-info-card">
+            <div class="card-header">
+                <i class="fas fa-user-circle"></i>
+                <span>{{ app.user.username|default('User') }}</span>
+            </div>
+            <div class="card-body">
+                <p>{{ app.user.email|default('user@example.com') }}</p>
+                <a href="#" class="btn btn-secondary">View Profile</a>
+            </div>
+        </div>
+    </div>
+</header>
