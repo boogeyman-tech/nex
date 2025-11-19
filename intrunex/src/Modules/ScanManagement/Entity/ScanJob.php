@@ -42,6 +42,20 @@ class ScanJob
     {
         return $this->asset;
     }
+    //#[ORM\Column(type: 'text', nullable: true)]
+    private ?string $details = null;
+
+    public function getDetails(): ?string
+    {
+       return $this->details;
+    }
+
+    public function setDetails(?string $details): self
+    {
+       $this->details = $details;
+       return $this;
+    }
+
 
     public function setAsset(?Asset $asset): static
     {
