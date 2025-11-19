@@ -106,6 +106,8 @@
 .recent-vulnerabilities {
     grid-column: 4 / 5;
     grid-row: 2 / 3;
+    max-height: 200px;
+    overflow-y: auto;
 }
 
 .system-health {
