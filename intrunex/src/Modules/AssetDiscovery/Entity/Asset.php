@@ -14,24 +14,20 @@ class Asset
     #[ORM\GeneratedValue]
     #[ORM\Column(type: "integer")]
     private ?int $id = null;
-    // just under private ?int $id
-//#[ORM\Column(type: "integer")]
-//private int $userAssetNumber = 0;
-#[ORM\Column(type: "integer", nullable: true)]
-private ?int $userAssetNumber = null;
 
+    #[ORM\Column(type: "integer", nullable: true)]
+    private ?int $userAssetNumber = null;
 
-public function getUserAssetNumber(): ?int
-{
-    return $this->userAssetNumber;
-}
+    public function getUserAssetNumber(): ?int
+    {
+        return $this->userAssetNumber;
+    }
 
-public function setUserAssetNumber(?int $num): self
-{
-    $this->userAssetNumber = $num;
-    return $this;
-}
-
+    public function setUserAssetNumber(?int $num): self
+    {
+        $this->userAssetNumber = $num;
+        return $this;
+    }
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
@@ -59,23 +55,23 @@ public function setUserAssetNumber(?int $num): self
     #[ORM\Column(type: "text", nullable: true)]
     private ?string $description = null;
 
-    // 🔹 Phase 1 Profiling fields
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $operatingSystem = null;
 
-    #[ORM\Column(type: "json", nullable: true)]
-    private ?array $openPorts = null;
+    // 🔧 FIXED: SQLite-safe JSON replacement
+    #[ORM\Column(type: "text", nullable: true)]
+    private ?string $openPorts = null;
 
     #[ORM\Column(type: "datetime_immutable", nullable: true)]
     private ?\DateTimeImmutable $lastProfiledAt = null;
 
-    // 🔹 Phase 2 Vulnerability Scan fields
     #[ORM\Column(type: "datetime_immutable", nullable: true)]
     private ?\DateTimeImmutable $lastVulnerabilityScanAt = null;
 
-    // ---------------------------------
-    // User getter and setter
-    // ---------------------------------
+    // --------------------------
+    // User getter & setter
+    // --------------------------
+
     public function getUser(): User
     {
         return $this->user;
@@ -87,9 +83,10 @@ public function setUserAssetNumber(?int $num): self
         return $this;
     }
 
-    // ---------------------------------
-    // Other Getters and Setters
-    // ---------------------------------
+    // --------------------------
+    // Basic getters & setters
+    // --------------------------
+
     public function getId(): ?int
     {
         return $this->id;
@@ -172,9 +169,6 @@ public function setUserAssetNumber(?int $num): self
         return $this;
     }
 
-    // ---------------------------------
-    // New fields for Profiling
-    // ---------------------------------
     public function getOperatingSystem(): ?string
     {
         return $this->operatingSystem;
@@ -186,21 +180,28 @@ public function setUserAssetNumber(?int $num): self
         return $this;
     }
 
+    // --------------------------
+    // FIXED openPorts JSON field
+    // --------------------------
+
     public function getOpenPorts(): ?array
     {
-        return $this->openPorts;
+        return $this->openPorts ? json_decode($this->openPorts, true) : null;
     }
 
     public function setOpenPorts(?array $openPorts): self
     {
-    // Ensure all ports are stored as strings
         if ($openPorts !== null) {
-        $openPorts = array_map(fn($p) => (string) $p, $openPorts);
+            $openPorts = array_map(fn($p) => (string) $p, $openPorts);
+        }
+
+        $this->openPorts = $openPorts ? json_encode($openPorts) : null;
+        return $this;
     }
 
-    $this->openPorts = $openPorts;
-    return $this;
-    }
+    // --------------------------
+    // Scan timestamps
+    // --------------------------
 
     public function getLastProfiledAt(): ?\DateTimeImmutable
     {
@@ -213,9 +214,6 @@ public function setUserAssetNumber(?int $num): self
         return $this;
     }
 
-    // ---------------------------------
-    // New fields for Vulnerability Scan
-    // ---------------------------------
     public function getLastVulnerabilityScanAt(): ?\DateTimeImmutable
     {
         return $this->lastVulnerabilityScanAt;
@@ -227,6 +225,9 @@ public function setUserAssetNumber(?int $num): self
         return $this;
     }
 }
+
+
+
 
 
 

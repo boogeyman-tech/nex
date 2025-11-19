@@ -6,6 +6,7 @@ use App\Modules\AuditLogging\Repository\ActivityLogRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ActivityLogRepository::class)]
+#[ORM\Table(name: "activity_log")]   // ✅ Tell Doctrine to use the existing table
 class ActivityLog
 {
     #[ORM\Id]
@@ -35,7 +36,6 @@ class ActivityLog
     public function setMessage(string $message): self
     {
         $this->message = $message;
-
         return $this;
     }
 
@@ -47,7 +47,6 @@ class ActivityLog
     public function setStatus(string $status): self
     {
         $this->status = $status;
-
         return $this;
     }
 
@@ -59,7 +58,10 @@ class ActivityLog
     public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
-
         return $this;
     }
 }
+
+
+
+

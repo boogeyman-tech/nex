@@ -31,6 +31,7 @@ class ScanJob
     private ?string $scanner = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
+    private ?string $details = null;
     private ?string $errorMessage = null;
 
     public function getId(): ?int
@@ -43,7 +44,7 @@ class ScanJob
         return $this->asset;
     }
     //#[ORM\Column(type: 'text', nullable: true)]
-    private ?string $details = null;
+    
 
     public function getDetails(): ?string
     {

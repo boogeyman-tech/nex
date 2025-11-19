@@ -17,8 +17,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: "string", unique: true)]
     private string $email;
 
-    #[ORM\Column(type: "json")]
-    private array $roles = [];
+    // 🔧 FIXED: SQLite-safe storage of roles
+    #[ORM\Column(type: "text", nullable: true)]
+    private ?string $roles = null;
 
     #[ORM\Column(type: "string")]
     private string $password;
@@ -39,17 +40,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * Symfony uses getUserIdentifier() for login (>=5.3)
-     */
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
     }
 
-    /**
-     * Deprecated, but sometimes needed for BC.
-     */
     public function getUsername(): string
     {
         return (string) $this->email;
@@ -57,8 +52,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getRoles(): array
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
+        $roles = $this->roles ? json_decode($this->roles, true) : [];
+
+        // ensure basic role
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
@@ -66,7 +62,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setRoles(array $roles): self
     {
-        $this->roles = $roles;
+        $this->roles = json_encode($roles);
         return $this;
     }
 
@@ -83,8 +79,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function eraseCredentials()
     {
-        // Clear temporary, sensitive data if stored
+        // Clear temporary sensitive data here if needed
     }
 }
+
+
 
 
