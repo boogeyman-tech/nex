@@ -1,18 +1,14 @@
+{{ form_row(registrationForm.email) }}
+                        {{ form_row(registrationForm.plainPassword.first) }}
+                        {{ form_row(registrationForm.plainPassword.second) }}
 
-{% extends 'base.html.twig' %}
-
-{% block title %}Register{% endblock %}
-
-{% form_theme registrationForm 'user_management/registration/form_theme.html.twig' %}
-
-{% block body %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <h1 class="card-title text-center mb-4">Register</h1>
-
+                        <div class="d-grid">
+                            <button class="btn btn-lg btn-primary" type="submit">
+                                Register
+                            </button>
+                        </div>
+                    {{ form_end(registrationForm) }}
+=======
                     {{ form_start(registrationForm) }}
                         {{ form_row(registrationForm.email) }}
                         {{ form_row(registrationForm.plainPassword.first) }}
@@ -33,10 +29,16 @@
                             </button>
                         </div>
                     {{ form_end(registrationForm) }}
+>>>>>>> REPLACE
 
-                    <p class="text-center mt-3">
-                        Already registered? <a href="{{ path('app_login') }}">Login now</a>
-                    </p>
+<<<<<<< SEARCH
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+=======
                 </div>
             </div>
         </div>
@@ -69,7 +71,3 @@
 </script>
 
 {% endblock %}
-
-
-
-
