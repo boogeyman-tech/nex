@@ -1,14 +1,22 @@
 <?php
 
+
 namespace App\Modules\AuditLogging\Entity;
 
 use App\Modules\AuditLogging\Repository\ActivityLogRepository;
+use App\Entity\User;
+use App\Entity\Traits\UserAwareTrait;
 use Doctrine\ORM\Mapping as ORM;
+
 
 #[ORM\Entity(repositoryClass: ActivityLogRepository::class)]
 #[ORM\Table(name: "activity_log")]   // ✅ Tell Doctrine to use the existing table
+
+
 class ActivityLog
 {
+    use UserAwareTrait;
+    
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]

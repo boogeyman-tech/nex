@@ -2,9 +2,13 @@
 
 namespace App\Modules\AssetDiscovery\Entity;
 
+
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Entity\User;
+use App\Modules\ScanManagement\Entity\ScanJob;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity]
 #[ORM\Table(name: "asset_discovery_asset")]
@@ -65,8 +69,17 @@ class Asset
     #[ORM\Column(type: "datetime_immutable", nullable: true)]
     private ?\DateTimeImmutable $lastProfiledAt = null;
 
+
     #[ORM\Column(type: "datetime_immutable", nullable: true)]
     private ?\DateTimeImmutable $lastVulnerabilityScanAt = null;
+
+    #[ORM\OneToMany(targetEntity: ScanJob::class, mappedBy: "asset", cascade: ["persist", "remove"])]
+    private Collection $scanJobs;
+
+    public function __construct()
+    {
+        $this->scanJobs = new ArrayCollection();
+    }
 
     // --------------------------
     // User getter & setter
@@ -221,7 +234,39 @@ class Asset
 
     public function setLastVulnerabilityScanAt(?\DateTimeImmutable $lastVulnerabilityScanAt): self
     {
+
         $this->lastVulnerabilityScanAt = $lastVulnerabilityScanAt;
+        return $this;
+    }
+
+    // --------------------------
+    // ScanJobs Collection
+    // --------------------------
+
+    /**
+     * @return Collection<int, ScanJob>
+     */
+    public function getScanJobs(): Collection
+    {
+        return $this->scanJobs;
+    }
+
+    public function addScanJob(ScanJob $scanJob): self
+    {
+        if (!$this->scanJobs->contains($scanJob)) {
+            $this->scanJobs->add($scanJob);
+            $scanJob->setAsset($this);
+        }
+        return $this;
+    }
+
+    public function removeScanJob(ScanJob $scanJob): self
+    {
+        if ($this->scanJobs->removeElement($scanJob)) {
+            if ($scanJob->getAsset() === $this) {
+                $scanJob->setAsset(null);
+            }
+        }
         return $this;
     }
 }
