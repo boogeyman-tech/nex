@@ -17,6 +17,7 @@ Before you begin, ensure you have the following installed:
 - **Git**: Version control
 
 
+
 ### Required PHP Extensions
 The following PHP extensions are required and will be installed automatically:
 - `php-cli` - Command-line interface
@@ -25,9 +26,11 @@ The following PHP extensions are required and will be installed automatically:
 - `php-xml` - XML processing
 - `php-mbstring` - Multi-byte string handling
 - `php-zip` - ZIP archive handling
-- `php-sqlite3` - SQLite database support
+- `php-sqlite3` - SQLite database support (default)
 - `php-intl` - Internationalization support
 - `php-gd` - Image processing
+
+**Note**: The database-specific extension (php-sqlite3, php-mysql, php-pgsql, etc.) depends on your chosen database.
 
 ### Additional Tools
 - **Nmap**: Network discovery and security auditing
@@ -97,9 +100,14 @@ APP_SECRET=your_unique_secret_key_here
 ```
 
 
-### 3. Database Setup
 
-Create the SQLite database directory and set up the database:
+### 3. Database Configuration
+
+IntruneX uses SQLite by default for simplicity, but you can easily configure it to use other database systems. The application is compatible with MySQL, PostgreSQL, and other Doctrine-supported databases.
+
+#### 3.1 SQLite (Default)
+
+SQLite is perfect for development and small deployments:
 
 ```bash
 # Create database directory if it doesn't exist
@@ -108,6 +116,149 @@ mkdir -p var
 # Create and migrate the SQLite database
 php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
+```
+
+**Configuration in `.env.local`:**
+```env
+DATABASE_URL="sqlite:///%kernel.project_dir%/var/data.db"
+```
+
+#### 3.2 MySQL/MariaDB
+
+For production environments or when you need more robust database features:
+
+**Install MySQL extension:**
+```bash
+sudo apt install -y php-mysql
+```
+
+**Configuration in `.env.local`:**
+```env
+DATABASE_URL="mysql://username:password@127.0.0.1:3306/intrunex_db?serverVersion=8.0&charset=utf8mb4"
+```
+
+**Setup MySQL database:**
+```bash
+# Create database
+mysql -u root -p -e "CREATE DATABASE intrunex_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+
+# Create user and grant privileges
+mysql -u root -p -e "CREATE USER 'intrunex_user'@'localhost' IDENTIFIED BY 'your_secure_password';"
+mysql -u root -p -e "GRANT ALL PRIVILEGES ON intrunex_db.* TO 'intrunex_user'@'localhost';"
+mysql -u root -p -e "FLUSH PRIVILEGES;"
+
+# Run migrations
+php bin/console doctrine:database:create
+php bin/console doctrine:migrations:migrate
+```
+
+#### 3.3 PostgreSQL
+
+For enterprise-grade deployments:
+
+**Install PostgreSQL extension:**
+```bash
+sudo apt install -y php-pgsql
+```
+
+**Configuration in `.env.local`:**
+```env
+DATABASE_URL="postgresql://username:password@127.0.0.1:5432/intrunex_db?serverVersion=13&charset=utf8"
+```
+
+**Setup PostgreSQL database:**
+```bash
+# Create database
+sudo -u postgres psql -c "CREATE DATABASE intrunex_db;"
+
+# Create user and grant privileges
+sudo -u postgres psql -c "CREATE USER intrunex_user WITH PASSWORD 'your_secure_password';"
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE intrunex_db TO intrunex_user;"
+
+# Run migrations
+php bin/console doctrine:database:create
+php bin/console doctrine:migrations:migrate
+```
+
+#### 3.4 Database Configuration Options
+
+You can also configure additional database options in `config/packages/doctrine.yaml`:
+
+```yaml
+doctrine:
+    dbal:
+        driver: 'pdo_mysql'  # or 'pdo_pgsql', 'pdo_sqlite'
+        url: '%env(resolve:DATABASE_URL)%'
+        options:
+            1002: true  # PDO::SQLITE_ATTR_ENABLE_FKEYS (for SQLite)
+        # Additional options for production
+        # charset: 'UTF8MB4'
+        # server_version: '8.0'
+        # logging: '%kernel.debug%'
+        # pool_size: 20
+        # connect_timeout: 10
+        # read_timeout: 10
+```
+
+#### 3.5 Switching Databases
+
+To migrate from SQLite to another database:
+
+1. **Backup existing data (if any):**
+```bash
+php bin/console doctrine:query:sql "SELECT * FROM user" --dump-sql > backup_users.sql
+```
+
+2. **Update `.env.local` with new database URL**
+
+3. **Create new database and run migrations:**
+```bash
+php bin/console doctrine:database:create
+php bin/console doctrine:migrations:migrate
+```
+
+4. **Import data if needed:**
+```bash
+# For MySQL
+mysql -u username -p intrunex_db < backup_data.sql
+
+# For PostgreSQL  
+psql -U username -d intrunex_db -f backup_data.sql
+```
+
+#### 3.6 Database-Specific Extensions
+
+Install the appropriate PHP extension based on your database choice:
+
+- **SQLite**: `php-sqlite3` (already included)
+- **MySQL/MariaDB**: `php-mysql` or `php-mysqli`
+- **PostgreSQL**: `php-pgsql`
+
+For Ubuntu/Debian systems:
+```bash
+# MySQL
+sudo apt install php-mysql
+
+# PostgreSQL  
+sudo apt install php-pgsql
+
+# Verify extension installation
+php -m | grep -E "(mysql|pgsql|sqlite)"
+```
+
+#### 3.7 Production Database Considerations
+
+For production environments, consider these additional configurations:
+
+1. **Connection Pooling**: Use connection pooling for better performance
+2. **Database Tuning**: Optimize database settings for your workload
+3. **Backup Strategy**: Implement regular automated backups
+4. **Monitoring**: Set up database performance monitoring
+5. **Security**: Use SSL connections and proper firewall rules
+
+**Example production MySQL configuration:**
+```env
+DATABASE_URL="mysql://intrunex_user:secure_password@db-server:3306/intrunex_db?sslmode=require&serverVersion=8.0&charset=utf8mb4"
 ```
 
 ### 4. Install PHP Dependencies
