@@ -28,20 +28,16 @@ class AssetController extends AbstractController
         $this->vulnerabilityScanService = $vulnerabilityScanService;
     }
 
-
     #[Route('/', name: 'asset_list')]
     public function list(EntityManagerInterface $em): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        $user = $this->getUser();
-        $assetRepository = $em->getRepository(Asset::class);
-        
-        $assets = $assetRepository->findAccessibleByUser($user);
+        $assets = $em->getRepository(Asset::class)
+                     ->findBy(['user' => $this->getUser()], ['userAssetNumber' => 'ASC']);
 
         return $this->render('asset_discovery/asset/list.html.twig', [
             'assets' => $assets,
-            'isAdmin' => $user->isAdmin(),
         ]);
     }
 
@@ -84,17 +80,14 @@ class AssetController extends AbstractController
         ]);
     }
 
-
     #[Route('/{id}/edit', name: 'asset_edit')]
     public function edit($id, Request $request, EntityManagerInterface $em): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        $user = $this->getUser();
-        $assetRepository = $em->getRepository(Asset::class);
-        $asset = $assetRepository->find($id);
+        $asset = $em->getRepository(Asset::class)->find($id);
 
-        if (!$asset || !$assetRepository->canUserAccessAsset($asset, $user)) {
+        if (!$asset || $asset->getUser() !== $this->getUser()) {
             throw $this->createNotFoundException();
         }
 
@@ -113,17 +106,13 @@ class AssetController extends AbstractController
         ]);
     }
 
-
     #[Route('/{id}/delete', name: 'asset_delete', methods: ['POST'])]
     public function delete($id, Request $request, EntityManagerInterface $em): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        $user = $this->getUser();
-        $assetRepository = $em->getRepository(Asset::class);
-        $asset = $assetRepository->find($id);
-        
-        if (!$asset || !$assetRepository->canUserAccessAsset($asset, $user)) {
+        $asset = $em->getRepository(Asset::class)->find($id);
+        if (!$asset || $asset->getUser() !== $this->getUser()) {
             throw $this->createNotFoundException();
         }
 
@@ -151,21 +140,16 @@ class AssetController extends AbstractController
         return $this->redirectToRoute('asset_list');
     }
 
-
     #[Route('/{id}', name: 'asset_detail', methods: ['GET'])]
     public function detail($id, EntityManagerInterface $em): Response
     {
-        $user = $this->getUser();
-        $assetRepository = $em->getRepository(Asset::class);
-        $vulnerabilityRepository = $em->getRepository(Vulnerability::class);
-        
-        $asset = $assetRepository->find($id);
+        $asset = $em->getRepository(Asset::class)->find($id);
 
-        if (!$asset || !$assetRepository->canUserAccessAsset($asset, $user)) {
+        if (!$asset || $asset->getUser() !== $this->getUser()) {
             throw $this->createNotFoundException();
         }
 
-        $vulnerabilities = $vulnerabilityRepository->findByAssetAndUser($asset, $user);
+        $vulnerabilities = $em->getRepository(Vulnerability::class)->findBy(['asset' => $asset]);
 
         return $this->render('asset_discovery/asset/detail.html.twig', [
             'asset' => $asset,
@@ -173,17 +157,14 @@ class AssetController extends AbstractController
         ]);
     }
 
-
     #[Route('/{id}/profile', name: 'asset_profile', methods: ['POST'])]
     public function profileAsset($id, Request $request, AssetProfilingService $profilingService, EntityManagerInterface $em): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        $user = $this->getUser();
-        $assetRepository = $em->getRepository(Asset::class);
-        $asset = $assetRepository->find($id);
+        $asset = $em->getRepository(Asset::class)->find($id);
 
-        if (!$asset || !$assetRepository->canUserAccessAsset($asset, $user)) {
+        if (!$asset || $asset->getUser() !== $this->getUser()) {
             throw $this->createNotFoundException();
         }
 
@@ -197,15 +178,12 @@ class AssetController extends AbstractController
         return $this->redirectToRoute('asset_detail', ['id' => $asset->getId()]);
     }
 
-
     #[Route('/vuln-scan/{id}', name: 'asset_vuln_scan', methods: ['POST'])]
     public function vulnScan($id, Request $request, VulnerabilityScanService $vulnerabilityScanService, MessageBusInterface $bus, EntityManagerInterface $em): Response
     {
-        $user = $this->getUser();
-        $assetRepository = $em->getRepository(Asset::class);
-        $asset = $assetRepository->find($id);
+        $asset = $em->getRepository(Asset::class)->find($id);
 
-        if (!$asset || !$assetRepository->canUserAccessAsset($asset, $user)) {
+        if (!$asset || $asset->getUser() !== $this->getUser()) {
             throw $this->createNotFoundException();
         }
 

@@ -15,29 +15,33 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_USER')]
 class ScanJobController extends AbstractController
 {
-
     #[Route('/scan-jobs', name: 'scan_job_list')]
     public function list(EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
-        
-        $scanJobRepository = $em->getRepository(ScanJob::class);
-        $scanJobs = $scanJobRepository->findAccessibleByUser($user, ['startedAt' => 'DESC']);
+
+        // Query scan jobs via asset owned by user
+        $qb = $em->createQueryBuilder()
+            ->select('sj')
+            ->from(ScanJob::class, 'sj')
+            ->join('sj.asset', 'a')
+            ->where('a.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('sj.startedAt', 'DESC')
+            ->setMaxResults(50);
+
+        $scanJobs = $qb->getQuery()->getResult();
 
         return $this->render('scan_management/scan_jobs.html.twig', [
             'scanJobs' => $scanJobs,
-            'isAdmin' => $user->isAdmin(),
         ]);
     }
 
-
     #[Route('/scan-job/{id}/progress', name: 'scan_progress')]
-    public function progress(ScanJob $scanJob, EntityManagerInterface $em): Response
+    public function progress(ScanJob $scanJob): Response
     {
-        $user = $this->getUser();
-        $scanJobRepository = $em->getRepository(ScanJob::class);
-
-        if (!$scanJobRepository->canUserAccessScanJob($scanJob, $user)) {
+        // Ownership check
+        if ($scanJob->getAsset()->getUser() !== $this->getUser()) {
             throw $this->createAccessDeniedException('You do not own this scan job.');
         }
 
@@ -46,14 +50,11 @@ class ScanJobController extends AbstractController
         ]);
     }
 
-
     #[Route('/scan-job/{id}/status', name: 'scan_progress_api')]
-    public function scanStatus(ScanJob $scanJob, EntityManagerInterface $em): JsonResponse
+    public function scanStatus(ScanJob $scanJob): JsonResponse
     {
-        $user = $this->getUser();
-        $scanJobRepository = $em->getRepository(ScanJob::class);
-
-        if (!$scanJobRepository->canUserAccessScanJob($scanJob, $user)) {
+        // Ownership check
+        if ($scanJob->getAsset()->getUser() !== $this->getUser()) {
             return new JsonResponse(['error' => 'Access denied'], 403);
         }
 
@@ -62,14 +63,11 @@ class ScanJobController extends AbstractController
         ]);
     }
 
-
     #[Route('/scan-job/{id}/cancel', name: 'scan_cancel', methods: ['POST'])]
     public function cancelScan(Request $request, ScanJob $scanJob, EntityManagerInterface $em): Response
     {
-        $user = $this->getUser();
-        $scanJobRepository = $em->getRepository(ScanJob::class);
-
-        if (!$scanJobRepository->canUserAccessScanJob($scanJob, $user)) {
+        // Ownership check
+        if ($scanJob->getAsset()->getUser() !== $this->getUser()) {
             return new Response('Access denied', 403);
         }
 
@@ -87,14 +85,11 @@ class ScanJobController extends AbstractController
         return new Response('Scan is not running', 400);
     }
 
-
     #[Route('/scan-job/{id}/delete', name: 'scan_delete', methods: ['POST'])]
     public function deleteScan(Request $request, ScanJob $scanJob, EntityManagerInterface $em): Response
     {
-        $user = $this->getUser();
-        $scanJobRepository = $em->getRepository(ScanJob::class);
-
-        if (!$scanJobRepository->canUserAccessScanJob($scanJob, $user)) {
+        // Ownership check
+        if ($scanJob->getAsset()->getUser() !== $this->getUser()) {
             $this->addFlash('error', 'You do not own this scan job.');
             return $this->redirectToRoute('scan_progress', ['id' => $scanJob->getId()]);
         }
@@ -112,13 +107,9 @@ class ScanJobController extends AbstractController
         return $this->redirectToRoute('scan_job_list');
     }
 
-
     #[Route('/scan-jobs/delete-multiple', name: 'scan_job_delete_multiple', methods: ['POST'])]
     public function deleteMultiple(Request $request, EntityManagerInterface $em): Response
     {
-        $user = $this->getUser();
-        $scanJobRepository = $em->getRepository(ScanJob::class);
-        
         $submittedToken = $request->request->get('_token');
         if (!$this->isCsrfTokenValid('delete_multiple_scans', $submittedToken)) {
             $this->addFlash('error', 'Invalid CSRF token.');
@@ -136,7 +127,8 @@ class ScanJobController extends AbstractController
 
         $deletedCount = 0;
         foreach ($scanJobs as $scanJob) {
-            if ($scanJobRepository->canUserAccessScanJob($scanJob, $user)) {
+            // Ownership check
+            if ($scanJob->getAsset()->getUser() === $this->getUser()) {
                 $em->remove($scanJob);
                 $deletedCount++;
             }

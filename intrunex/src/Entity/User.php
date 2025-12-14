@@ -39,12 +39,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: "string", length: 100, nullable: true)]
     private ?string $jobRole = null;
 
-
     #[ORM\Column(type: "string", length: 500, nullable: true)]
     private ?string $jobDescription = null;
-
-    #[ORM\Column(type: "datetime_immutable")]
-    private ?\DateTimeImmutable $createdAt = null;
 
     public function getId(): ?int
     {
@@ -159,7 +155,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-
     public function getJobDescription(): ?string
     {
         return $this->jobDescription;
@@ -168,74 +163,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setJobDescription(?string $jobDescription): self
     {
         $this->jobDescription = $jobDescription;
-        return $this;
-    }
-
-    /**
-     * Check if user has admin privileges
-     */
-    public function isAdmin(): bool
-    {
-        return in_array('ROLE_ADMIN', $this->getRoles());
-    }
-
-    /**
-     * Check if user has specific role
-     */
-    public function hasRole(string $role): bool
-    {
-        return in_array($role, $this->getRoles());
-    }
-
-    /**
-     * Get all user data for admin access (masked sensitive fields)
-     */
-    public function getPublicData(): array
-    {
-        return [
-            'id' => $this->id,
-            'email' => $this->email,
-            'name' => $this->name,
-            'organizationName' => $this->organizationName,
-            'jobRole' => $this->jobRole,
-            'countryCode' => $this->countryCode,
-            'mobileNumber' => $this->mobileNumber ? substr($this->mobileNumber, -4) : null, // Mask phone
-            'createdAt' => $this->createdAt ?? null,
-            'isAdmin' => $this->isAdmin(),
-        ];
-    }
-
-    /**
-     * Check if this user can access another user's data
-     */
-    public function canAccessUserData(User $targetUser): bool
-    {
-        // Users can always access their own data
-        if ($this === $targetUser) {
-            return true;
-        }
-
-        // Admin users can access any user's data
-        return $this->isAdmin();
-    }
-
-    /**
-     * Get user's display name (fallback to email)
-     */
-
-    public function getDisplayName(): string
-    {
-        return $this->name ?: $this->email;
-    }
-
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): self
-    {
-        $this->createdAt = $createdAt;
         return $this;
     }
 }
